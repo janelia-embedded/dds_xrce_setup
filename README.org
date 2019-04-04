@@ -1,0 +1,90 @@
+#+TITLE: DDS Teensy README
+#+AUTHOR: Peter Polidoro
+#+EMAIL: peterpolidoro@gmail.com
+
+* Repository Information
+  - Author :: Peter Polidoro
+  - License :: BSD
+
+* Install
+** Install Teensy Loader
+*** Clone and Compile
+
+    #+BEGIN_SRC sh
+      sudo apt-get install libusb-dev
+      mkdir ~/teensy
+      cd ~/teensy
+      git clone https://github.com/PaulStoffregen/teensy_loader_cli.git
+      cd teensy_loader_cli
+      make
+      sed -i '/^alias teensy_loader_cli=/d' ~/.bashrc
+      echo "alias teensy_loader_cli='$(pwd)/teensy_loader_cli'" >> ~/.bashrc
+      source ~/.bashrc
+    #+END_SRC
+
+*** Setup udev Rules
+**** Download
+
+     [[https://www.pjrc.com/teensy/td_download.html]]
+
+     Right-click 'Linux udev rules'
+
+     Save Link As...
+
+**** Copy to udev
+
+     #+BEGIN_SRC sh
+       sudo cp ~/Downloads/49-teensy.rules /etc/udev/rules.d/
+     #+END_SRC
+
+    You may need to add yourself to the group 'dialout' in order to have write
+    permissions on the USB port:
+
+    #+BEGIN_SRC sh
+      sudo usermod -aG dialout $USER
+      sudo reboot
+    #+END_SRC
+
+** Install NuttX
+*** Download
+
+    #+BEGIN_SRC sh
+      mkdir ~/nuttx
+      cd ~/nuttx
+      git clone https://bitbucket.org/nuttx/nuttx
+      git clone https://bitbucket.org/nuttx/apps
+      git clone https://bitbucket.org/nuttx/tools
+    #+END_SRC
+
+*** Setup
+
+    #+BEGIN_SRC sh
+      sudo apt-get install gcc-arm-none-eabi
+      sudo apt-get install make gperf flex bison libncurses-dev
+      cd ~/nuttx/tools/kconfig-frontends
+      ./configure --disable-shared --enable-static --enable-mconf --disable-nconf --disable-gconf --disable-qconf --disable-nconf --disable-utils
+      make
+      sudo make install
+    #+END_SRC
+
+*** Compile
+
+    #+BEGIN_SRC sh
+      cd ~/nuttx/nuttx/tools
+      ./configure.sh teensy-3.x/nsh
+      ./configure.sh teensy-3.x/usbnsh
+      cd ..
+      make menuconfig
+      # Build Setup  --->
+      # Build Host Platform (Linux)  --->
+      make
+    #+END_SRC
+
+*** Load
+
+    #+BEGIN_SRC sh
+      cd ~/nuttx/nuttx
+      teensy_loader_cli
+      # Teensy 3.2 & 3.1
+      teensy_loader_cli --mcu=mk20dx256 -w nuttx.hex
+    #+END_SRC
