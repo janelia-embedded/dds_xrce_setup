@@ -7,7 +7,7 @@
   - License :: BSD
 
 * Install
-** Install Teensy Loader
+** Teensy Loader
 *** Clone and Compile
 
     #+BEGIN_SRC sh
@@ -45,17 +45,25 @@
       sudo reboot
     #+END_SRC
 
-** Install NuttX
+** Micro-XRCE-DDS-Client
+*** Setup
+
+    #+BEGIN_SRC sh
+      sudo apt-get install cmake cmake-qt-gui
+    #+END_SRC
+
 *** Download
 
     #+BEGIN_SRC sh
       mkdir ~/nuttx
       cd ~/nuttx
-      git clone https://bitbucket.org/nuttx/nuttx
-      git clone https://bitbucket.org/nuttx/apps
-      git clone https://bitbucket.org/nuttx/tools
+      git clone https://github.com/eProsima/micro-XRCE-DDS-client.git
+      cd micro-XRCE-DDS-client
+      mkdir build && cd build
+      cmake -DTHIRDPARTY=ON -DEPROSIMA_BUILD_EXAMPLES=ON -DCMAKE_TOOLCHAIN_FILE=toolchains/nuttx_toolchain.cmake -VERBOSE_MESSAGE=ON ..
     #+END_SRC
 
+** NuttX
 *** Setup
 
     #+BEGIN_SRC sh
@@ -67,6 +75,18 @@
       sudo make install
     #+END_SRC
 
+*** COMMENT Download
+
+    #+BEGIN_SRC sh
+      mkdir ~/nuttx
+      cd ~/nuttx
+      git clone https://bitbucket.org/nuttx/nuttx
+      #git clone https://bitbucket.org/nuttx/apps
+      #git clone https://github.com/eProsima/Micro-XRCE-DDS-Nuttx-Apps.git apps
+      git clone https://github.com/microROS/apps.git apps
+      git clone https://bitbucket.org/nuttx/tools
+    #+END_SRC
+
 *** Compile
 
     #+BEGIN_SRC sh
@@ -74,8 +94,9 @@
       ./configure.sh teensy-3.x/usbnsh
       cd ..
       make menuconfig
-      # Build Setup  --->
-      # Build Host Platform (Linux)  --->
+      # Application Configuration  --->
+      # Micro XRCE-DDS  --->
+      # [*] Enable Micro XRCE-DDS Client
       make
     #+END_SRC
 
@@ -84,5 +105,5 @@
     #+BEGIN_SRC sh
       cd ~/nuttx/nuttx
       # Teensy 3.2 & 3.1
-      teensy_loader_cli --mcu=mk20dx256 -w nuttx.hex
+      teensy_loader_cli --mcu=mk20dx256 -wv nuttx.hex
     #+END_SRC
