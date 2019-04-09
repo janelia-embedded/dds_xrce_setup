@@ -45,65 +45,25 @@
       sudo reboot
     #+END_SRC
 
-** Micro-XRCE-DDS-Client
-*** Setup
-
-    #+BEGIN_SRC sh
-      sudo apt-get install cmake cmake-qt-gui
-    #+END_SRC
-
-*** Download
-
-    #+BEGIN_SRC sh
-      mkdir ~/nuttxspace
-      cd ~/nuttxspace
-      git clone https://github.com/eProsima/micro-XRCE-DDS-client.git
-      cd micro-XRCE-DDS-client
-      mkdir build && cd build
-      cmake -DTHIRDPARTY=ON -DEPROSIMA_BUILD_EXAMPLES=ON -DCMAKE_TOOLCHAIN_FILE=toolchains/nuttx_toolchain.cmake -VERBOSE_MESSAGE=ON ..
-    #+END_SRC
-
 ** NuttX
 *** Setup
 
-    #+BEGIN_SRC sh
-      sudo apt-get install gcc-arm-none-eabi
-      sudo apt-get install make gperf flex bison libncurses-dev
-      cd ~/nuttxspace/tools/kconfig-frontends
-      ./configure --disable-shared --enable-static --enable-mconf --disable-nconf --disable-gconf --disable-qconf --disable-nconf --disable-utils
-      make
-      sudo make install
-    #+END_SRC
+    [[https://github.com/janelia-embedded/nuttx_setup.git]]
 
-*** COMMENT Download
+*** Compile and Load
 
     #+BEGIN_SRC sh
-      mkdir ~/nuttxspace
-      cd ~/nuttxspace
-      git clone https://bitbucket.org/nuttx/nuttx
-      #git clone https://bitbucket.org/nuttx/apps
-      #git clone https://github.com/eProsima/Micro-XRCE-DDS-Nuttx-Apps.git apps
-      git clone https://github.com/microROS/apps.git apps
-      git clone https://bitbucket.org/nuttx/tools
-    #+END_SRC
-
-*** Compile
-
-    #+BEGIN_SRC sh
-      cd ~/nuttxspace/nuttx/tools
-      ./configure.sh teensy-3.x/usbnsh
-      cd ..
+      cd ~/nuttx_ws/nuttx/
+      git clean -xdf
+      ./tools/configure.sh teensy-3.x/usbnsh
       make menuconfig
       # Application Configuration  --->
       # Micro XRCE-DDS  --->
       # [*] Enable Micro XRCE-DDS Client
+      # Application Configuration  --->
+      # Examples  --->
+      # [*] Micro XRCE-DDS example
       make
-    #+END_SRC
-
-*** Load
-
-    #+BEGIN_SRC sh
-      cd ~/nuttxspace/nuttx
       # Teensy 3.2 & 3.1
       teensy_loader_cli --mcu=mk20dx256 -wv nuttx.hex
     #+END_SRC
