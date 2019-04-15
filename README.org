@@ -83,8 +83,8 @@
 
      #+BEGIN_SRC sh
        cd ~/nuttx_ws/nuttx/
-       git clean -xdf
-       ./tools/configure.sh olimex-stm32-e407/nsh
+       make distclean
+       ./tools/configure.sh olimex-stm32-e407/uros
        make menuconfig
        # Device Drivers  --->
        # [ ] Disable driver poll interfaces
